@@ -424,35 +424,51 @@ class ConfigGenerator():
                 self.test_constraints["constraint_textures"] = {"path": self.constraint_textures_dir,"num_images": num_images_textures}
             
             self.deformation = st.checkbox("Deformation Constraint", value=False)
+            deformation_parameters = {}
             if self.deformation:
                 st.caption("Deformation Constraint is based on the object's mesh properties. Refer Documentation for more details")
                 de1,de2,de3 = st.columns(3)
-                deformation_type = de1.selectbox("Deformation Type", ['Bend', 'Twist', 'Dent','Crush','Shear'], index=0)
+                deformation_type = de1.selectbox("Deformation Type", ['Bend', 'Twist', 'Dent','Crush'], index=0)
                 if deformation_type == 'Bend':
                     st.caption("Bend Deformation is applied to the object")
                     bend_col1,bend_col2 = st.columns(2)
                     bend_angle = bend_col1.number_input("Bend Angle", min_value=0, max_value=360, value=90)
                     bend_axis = bend_col2.selectbox("Bend Axis", ['X', 'Y', 'Z'], index=0)
+                    
+                    deformation_parameters['deformation_type'] = deformation_type
+                    deformation_parameters['bend_angle'] = bend_angle
+                    deformation_parameters['bend_axis'] = bend_axis
+
                 elif deformation_type == 'Twist':
                     st.caption("Twist Deformation is applied to the object")
                     twist_col1, twist_col2 = st.columns(2)
                     twist_angle = twist_col1.number_input("Twist Angle", min_value=0, max_value=360, value=90)
                     twist_axis = twist_col2.selectbox("Twist Axis", ['X', 'Y', 'Z'], index=0)
+
+                    deformation_parameters['deformation_type'] = deformation_type
+                    deformation_parameters['twist_angle'] = twist_angle
+                    deformation_parameters['twist_axis'] = twist_axis
+
                 elif deformation_type == 'Dent':
                     st.caption("Dent Deformation is applied to the object")
                     dent_col1, dent_col2 = st.columns(2)
                     dent_depth = dent_col1.number_input("Dent Depth", min_value=0, max_value=10, value=5)
                     dent_radius = dent_col2.number_input("Dent Radius", min_value=0, max_value=10, value=3)
+
+                    deformation_parameters['deformation_type'] = deformation_type
+                    deformation_parameters['dent_depth'] = dent_depth
+                    deformation_parameters['dent_radius'] = dent_radius
+
                 elif deformation_type == 'Crush':
                     st.caption("Crush Deformation is applied to the object")
                     crush_col1, crush_col2 = st.columns(2)
-                    crush_depth = crush_col1.number_input("Crush Depth", min_value=0, max_value=10, value=5)
-                    crush_radius = crush_col2.number_input("Crush Radius", min_value=0, max_value=10, value=3)
-                elif deformation_type == 'Shear':
-                    st.caption("Shear Deformation is applied to the object")
-                    shear_col1, shear_col2 = st.columns(2)
-                    shear_factor = shear_col1.number_input("Shear Factor", min_value=-10.0, max_value=10.0, value=0.5)
-                    shear_axis = shear_col2.selectbox("Shear Axis", ['X', 'Y', 'Z'], index=0)
+                    crush_axis = crush_col1.selectbox("Crush Axis", ['X', 'Y', 'Z'], index=0)
+                    crush_amount = crush_col2.number_input("amount", min_value=0, max_value=10, value=3)
+
+                    deformation_parameters['deformation_type'] = deformation_type
+                    deformation_parameters['crush_axis'] = crush_axis
+                    deformation_parameters['crush_amount'] = crush_amount
+
                 st.caption("Recommended values for Subdivision Surface are between 1 and 4")
                 # de1,de2 = st.columns(2)
                 # subdivision_surface = de1.checkbox("Subdivision Surface", value=False)
@@ -460,7 +476,7 @@ class ConfigGenerator():
                 num_images_deformation = de3.number_input("Number of Images to Render - Deformation", min_value=2, max_value=10000, value=10)
                 self.test_constraints["deformation"] = {"num_images": num_images_deformation,
                                                         "subdivision_surface_parameter":subdivision_surface_val,
-                                                        "deformation_type": deformation_type
+                                                        "deformation_parameters":deformation_parameters
                                                         }
 
             #self.noise = st.checkbox("Noise Constraint", value=False)
